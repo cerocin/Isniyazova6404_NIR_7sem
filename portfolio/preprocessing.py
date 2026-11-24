@@ -3,7 +3,7 @@ import pandas as pd
 
 
 class ReturnsBuilder:
-    # простые дневные доходности без потери строк и с фильтром скачков
+   
     def __init__(self, cfg):
         self.cfg = cfg
 
@@ -17,10 +17,9 @@ class ReturnsBuilder:
 
     def build(self, prices):
         prices = prices.sort_index()
-        # доходность считается только между соседними датами, где цена есть у самого актива
+        
         rets = prices / prices.shift(1) - 1.0
 
-        # разрывы календаря (закрытие биржи): доходность за такой период не дневная
         days = prices.index.to_series().diff().dt.days.to_numpy()
         gap_rows = np.nan_to_num(days, nan=0) > self.cfg.max_gap_days
         n_gap = int(gap_rows.sum())
@@ -28,7 +27,7 @@ class ReturnsBuilder:
             print(f"  Разрывов календаря > {self.cfg.max_gap_days} дн.: {n_gap} (доходности за них исключены)")
             rets.loc[gap_rows] = np.nan
 
-        # скачки цены (сплиты, консолидации, ошибки данных) исключаются из выборки
+        
         jump = np.abs(np.log1p(rets)) > self.cfg.jump_threshold
         rows, cols = np.where(jump.to_numpy())
         log = []
@@ -43,7 +42,7 @@ class ReturnsBuilder:
         return rets.dropna(how="all"), jump_log
 
     def select_assets(self, rets, verbose=True):
-        # отбор только по качеству данных (по значениям доходности не отбираем)
+       
         cnt = rets.count()
         coverage = cnt / cnt.max()
         ok = (coverage >= self.cfg.min_coverage) & (cnt >= self.cfg.min_obs) & (rets.std() > 0)
@@ -58,13 +57,13 @@ class ReturnsBuilder:
 
 
 class MomentsEstimator:
-    # оценка годовых mu и Sigma: попарная ковариация, коррекция до PSD, сжатие mu
+   
     def __init__(self, cfg):
         self.cfg = cfg
 
     @staticmethod
     def nearest_psd(cov, eps=1e-8):
-        # обрезаем отрицательные собственные значения корреляционной матрицы
+       
         sd = np.sqrt(np.diag(cov))
         corr = cov / np.outer(sd, sd)
         vals, vecs = np.linalg.eigh((corr + corr.T) / 2)
@@ -78,7 +77,7 @@ class MomentsEstimator:
 
     @staticmethod
     def shrink_mean(mu, cov, t_obs):
-        # сжатие вектора mu к доходности минимально-дисперсионного портфеля (Йорион, 1986)
+        
         n = len(mu)
         ones = np.ones(n)
         inv_ones = np.linalg.solve(cov, ones)
