@@ -16,13 +16,13 @@ SUMMARY_COLS = ["Доходность", "Риск", "Шарп", "Активов"
 
 
 class PortfolioPipeline:
-    # полный цикл: данные -> проверка -> доходности -> оптимизация -> файлы и графики
+ 
     def __init__(self, cfg):
         self.cfg = cfg
         self.builder = ReturnsBuilder(cfg)
         self.estimator = MomentsEstimator(cfg)
 
-    # ---- данные ----
+  
     def _load(self):
         cfg = self.cfg
         if cfg.input_csv:
@@ -37,7 +37,7 @@ class PortfolioPipeline:
             return CsvStore(cache).read()
 
     def _slice(self, prices):
-        # временной срез задаётся параметрами, а не правкой кода
+      
         prices = prices.loc[self.cfg.start:self.cfg.end].dropna(axis=1, how="all")
         if prices.empty:
             raise ValueError("В выбранном временном срезе нет данных.")
@@ -46,7 +46,7 @@ class PortfolioPipeline:
             raise ValueError(f"Период данных {span} дн. короче минимума {self.cfg.min_span_days} дн.")
         return prices
 
-    # ---- модели ----
+  
     def _summary(self, opt, weights, status):
         rows = {}
         for name in MODEL_NAMES:
@@ -62,7 +62,7 @@ class PortfolioPipeline:
         return pd.DataFrame.from_dict(rows, orient="index", columns=SUMMARY_COLS)
 
     def _holdout(self, rets):
-        # оптимизация на обучающей части, оценка на отложенной
+       
         cfg = self.cfg
         if cfg.holdout <= 0:
             return None
@@ -99,7 +99,7 @@ class PortfolioPipeline:
         print(f"[ОТЛОЖЕННАЯ ВЫБОРКА] обучение: {len(train)} дней, тест: {len(test)} дней")
         return pd.DataFrame.from_dict(rows, orient="index", columns=cols)
 
-    # ---- основной запуск ----
+   
     def run(self):
         cfg, timer = self.cfg, StageTimer()
         with timer.stage("Загрузка данных"):
