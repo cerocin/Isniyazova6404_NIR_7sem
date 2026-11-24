@@ -7,7 +7,7 @@ import pandas as pd
 
 
 class StageTimer:
-    # замер времени по этапам расчёта
+   
     def __init__(self):
         self.records = []
         self._start = time.perf_counter()
@@ -26,7 +26,7 @@ class StageTimer:
 
 
 def package_versions():
-    # версии Python и библиотек для воспроизводимости
+   
     out = {"python": platform.python_version()}
     for name in ("pandas", "numpy", "scipy", "matplotlib", "openpyxl", "requests", "apimoex"):
         try:
