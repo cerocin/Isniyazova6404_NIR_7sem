@@ -14,7 +14,6 @@ _TICKERS = [
     "PRMD", "RAGR", "RASP", "RENI", "RTKM", "SIBN", "SGZH", "SNGS", "SVCB", "UGLD",
     "UPRO", "IRAO", "UTAR", "VSEH", "WUSH",
 ]
-# убираем повторы (UGLD был в списке дважды), порядок сохраняется
 DEFAULT_TICKERS = list(dict.fromkeys(_TICKERS))
 
 
@@ -27,12 +26,12 @@ class Config:
     data_dir: Path = ROOT / "data"
     results_dir: Path = ROOT / "results"
     graphics_dir: Path = ROOT / "graphics"
-    # параметры моделей
+   
     max_risk: float = 0.30
     target_return: float = 0.20
     max_weight: float = 0.30
     rf: float = 0.15
-    # параметры обработки данных
+    
     trading_days: int = 252
     min_coverage: float = 0.75
     min_obs: int = 120
