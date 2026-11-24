@@ -7,7 +7,7 @@ from matplotlib.ticker import PercentFormatter
 from scipy.cluster import hierarchy
 
 plt.rcParams["font.family"] = "sans-serif"
-plt.rcParams["font.sans-serif"] = ["DejaVu Sans", "Arial"]  # обе гарнитуры содержат кириллицу
+plt.rcParams["font.sans-serif"] = ["DejaVu Sans", "Arial"]  
 plt.rcParams["axes.unicode_minus"] = False
 
 MARKERS = ["o", "s", "^", "D", "v", "P"]
