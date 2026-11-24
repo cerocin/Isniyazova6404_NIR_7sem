@@ -34,7 +34,7 @@ class ValidationReport:
 
 
 class PriceValidator:
-    # собственная проверка таблицы цен: даты, текст, нули, пропуски
+    
     def __init__(self, cfg):
         self.cfg = cfg
 
@@ -44,7 +44,7 @@ class PriceValidator:
         rep = ValidationReport(rows_in=prices.shape[0], cols_in=prices.shape[1])
         df = prices.copy()
 
-        # 1. индекс -> даты, удаление битых и повторных дат
+        
         idx = pd.to_datetime(df.index, errors="coerce")
         bad = np.asarray(idx.isna())
         rep.bad_dates = int(bad.sum())
@@ -54,7 +54,7 @@ class PriceValidator:
         rep.duplicate_dates = int(dup.sum())
         df = df.loc[~dup].sort_index()
 
-        # 2. текст в числовых ячейках
+      
         num = df.apply(pd.to_numeric, errors="coerce")
         text = df.notna() & num.isna()
         rep.text_cells = int(text.to_numpy().sum())
@@ -63,14 +63,14 @@ class PriceValidator:
             print(f"  [!] В столбце {col} найден текст (пример: {example!r}); заменён на NaN.")
         df = num.astype(float).replace([np.inf, -np.inf], np.nan)
 
-        # 3. цены должны быть строго положительными
+       
         nonpos = df <= 0
         rep.nonpositive_cells = int(nonpos.to_numpy().sum())
         if rep.nonpositive_cells:
             print(f"  [!] Найдено {rep.nonpositive_cells} цен <= 0; заменены на NaN.")
         df = df.mask(nonpos)
 
-        # 4. полностью пустые столбцы
+    
         empty = df.columns[df.isna().all().to_numpy()]
         rep.empty_columns = list(empty)
         df = df.drop(columns=empty)
