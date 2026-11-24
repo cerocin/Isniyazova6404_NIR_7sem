@@ -4,7 +4,7 @@ import pandas as pd
 
 
 class ReportWriter:
-    # сохранение всех результатов расчёта
+    
     def __init__(self, results_dir):
         self.dir = results_dir
         self.dir.mkdir(parents=True, exist_ok=True)
@@ -20,7 +20,7 @@ class ReportWriter:
         print(f"Сохранено: {path}")
 
     def write_excel(self, tables, filename="results.xlsx"):
-        # tables: {имя листа: DataFrame, index_flag}
+        
         path = self.dir / filename
         with pd.ExcelWriter(path, engine="openpyxl") as writer:
             for sheet, (df, keep_index) in tables.items():
