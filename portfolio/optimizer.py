@@ -13,12 +13,12 @@ MODEL_NAMES = [
 
 
 class InfeasibleError(ValueError):
-    # задача оптимизации не имеет допустимого решения
+   
     pass
 
 
 def cap_weights(w, cap):
-    # приведение весов к ограничению w_i <= cap с сохранением суммы 1
+    
     w = np.asarray(w, dtype=float).copy()
     if cap >= 1.0:
         return w
@@ -46,7 +46,7 @@ class PortfolioOptimizer:
         self.rf, self.tol, self.max_iter = rf, tol, max_iter
         self.rng = np.random.default_rng(seed)
 
-    # ---- метрики портфеля ----
+    
     def ret(self, w):
         return float(np.dot(w, self.m))
 
@@ -60,13 +60,13 @@ class PortfolioOptimizer:
             raise ZeroDivisionError("Риск портфеля равен нулю: коэффициент Шарпа не определён.")
         return (self.ret(w) - self.rf) / s
 
-    # ---- допустимые границы ----
+   
     def _check_cap(self, cap):
         if cap is not None and self.n * cap < 1 - 1e-9:
             raise InfeasibleError(f"n·w_max = {self.n}·{cap} < 1: доли активов не могут давать в сумме 1.")
 
     def max_return_weights(self, cap=None):
-        # жадное заполнение: максимальная достижимая доходность при w_i <= cap
+        
         cap = 1.0 if cap is None else cap
         self._check_cap(cap)
         w, left = np.zeros(self.n), 1.0
@@ -107,7 +107,7 @@ class PortfolioOptimizer:
     def _budget():
         return {"type": "eq", "fun": lambda w: np.sum(w) - 1.0, "jac": lambda w: np.ones_like(w)}
 
-    # ---- модели ----
+    
     def equal_weights(self):
         return np.full(self.n, 1.0 / self.n)
 
@@ -151,7 +151,7 @@ class PortfolioOptimizer:
         return self._solve(neg_sharpe, grad, [self._budget()], max_weight, "макс. Шарп")
 
     def solve_models(self, max_risk, target_return, max_weight):
-        # шесть моделей; недопустимая модель не прерывает расчёт остальных
+        
         jobs = [
             lambda: self.equal_weights(),
             lambda: self.max_return(max_risk),
@@ -170,7 +170,7 @@ class PortfolioOptimizer:
         return weights, status
 
     def efficient_frontier(self, n_points=30, max_weight=None):
-        # от портфеля минимальной дисперсии до портфеля максимальной доходности
+        
         w_gmv = self.min_risk(None, max_weight)
         w_top = self.max_return_weights(max_weight)
         lo, hi = self.ret(w_gmv), self.ret(w_top)
