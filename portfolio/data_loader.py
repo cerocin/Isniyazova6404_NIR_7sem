@@ -12,8 +12,7 @@ ISS_URL = "https://iss.moex.com/iss/index.json"
 
 
 class MoexLoader:
-    # загрузка дневных цен закрытия с MOEX ISS
-    def __init__(self, cfg, pause=0.2, retries=2):
+     def __init__(self, cfg, pause=0.2, retries=2):
         self.cfg = cfg
         self.pause = pause
         self.retries = retries
@@ -68,8 +67,7 @@ class MoexLoader:
 
 
 class CsvStore:
-    # чтение и запись таблицы цен в CSV (кэш и ручной ввод данных)
-    def __init__(self, path):
+       def __init__(self, path):
         self.path = Path(path)
 
     def read(self):
